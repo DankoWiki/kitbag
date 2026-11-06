@@ -1235,7 +1235,7 @@ const toggleKey = (obj, k) => { if (obj[k]) delete obj[k]; else obj[k] = true; }
 // the offline build sets KITBAG_PWA; the same code runs as the claude.ai artifact without it
 const PWA = !!window.KITBAG_PWA;
 const APP_URL = 'https://dankowiki.github.io/kitbag/';
-const SHOW_APP_LINK = false;
+const SHOW_APP_LINK = true;
 const pad2 = n => String(n).padStart(2, '0');
 const fmtStamp = d => pad2(d.getDate()) + '.' + pad2(d.getMonth() + 1) + '.' + String(d.getFullYear()).slice(2) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
 const backupText = () => JSON.stringify({app:'kitbag-nachshon', v:1, exportedAt:new Date().toISOString(), state});
