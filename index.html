@@ -141,7 +141,7 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(48px,13vw,68px);
 .sec-bar{grid-column:1/-1;display:block;height:3px;background:var(--sunk);border-radius:2px;overflow:hidden}
 .sec-bar i{display:block;height:100%;background:var(--olive);transition:width .3s}
 .row{border-top:1px solid var(--line)}
-.row-l{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center}
+.row-l{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center}
 .row-main{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 14px;min-height:52px}
 .box{width:22px;height:22px;border:2px solid var(--box);border-radius:3px;display:grid;place-items:center;transition:background .15s,border-color .15s}
 .box svg{width:14px;height:14px;fill:none;stroke:var(--on-olive);opacity:0}
@@ -171,7 +171,22 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(48px,13vw,68px);
 .crit-b.on svg{opacity:1}
 .tag-st{font-size:11px;font-weight:600;padding:0 6px;border-radius:3px;background:var(--sunk);color:var(--muted)}
 .tag-lost{color:var(--stamp);background:none;box-shadow:inset 0 0 0 1px var(--stamp)}
-.st-used .box,.st-left .box{background:var(--muted);border-color:var(--muted)}
+.st-used .box{background:var(--muted);border-color:var(--muted)}
+
+/* left at the base */
+.st-left .box,.base-box{background:var(--olive-soft);border-color:var(--olive)}
+.st-left .box svg,.base-box svg{opacity:1;stroke:var(--olive)}
+.st-left .nm{color:var(--muted)}
+.tag-base{font-size:11px;font-weight:600;color:var(--olive);background:var(--olive-soft);padding:0 6px;border-radius:3px}
+.base-pill{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;font-weight:600;color:var(--muted);background:var(--surface);white-space:nowrap}
+.base-pill svg{width:13px;height:13px;flex:none}
+.base-pill.on{background:var(--olive-soft);border-color:var(--olive);color:var(--olive)}
+@media (max-width:380px){.base-pill{padding:0 9px}.base-pill .bp-t{display:none}.base-pill svg{width:15px;height:15px}}
+.sec-base{border-color:var(--olive)}
+.sec-base .sec-t svg{width:16px;height:16px;color:var(--olive);flex:none;align-self:center}
+.is-base .row-main{cursor:default}
+.is-base .row-l > .btn-s{margin-inline-end:12px;white-space:nowrap}
+.btn-s svg{width:16px;height:16px;flex:none}
 .is-part .box{background:var(--buy);border-color:var(--buy)}
 .is-part .box svg{opacity:1;stroke:var(--on-buy)}
 .is-lost .box{background:var(--stamp);border-color:var(--stamp)}
@@ -349,6 +364,7 @@ label.btn-s{cursor:pointer}
     <div class="stats">
       <span>נשאר לארוז <b id="st-left">0</b></span>
       <span>לקנות <b id="st-buy">0</b></span>
+      <span id="st-base-w" hidden>בבסיס <b id="st-base">0</b></span>
       <span class="sync" id="sync" data-s="local"><i></i><span id="sync-t">נשמר במכשיר הזה</span></span>
     </div>
   </div>
@@ -421,7 +437,7 @@ label.btn-s{cursor:pointer}
 
     <div class="panel">
       <h2>סבב חדש</h2>
-      <p class="lede">לפני כל שבוע אורזים מחדש. הסבב החדש מנקה את סימוני האריזה, את רשימת החזרה, את בדיקת המלאי ואת הבדיקות האחרונות. פריטים שסימנת „נשאר בבסיס" מסומנים מראש כארוזים. הכמויות, התיקים והפריטים שהוספת נשמרים.</p>
+      <p class="lede">לפני כל שבוע אורזים מחדש. הסבב החדש מנקה את סימוני האריזה, את רשימת החזרה, את בדיקת המלאי ואת הבדיקות האחרונות. פריטים שסימנת „השארתי בבסיס" נשארים בבסיס: הם לא מופיעים ברשימת האריזה, ומחכים לך מסומנים ברשימת החזרה. הכמויות, התיקים והפריטים שהוספת נשמרים.</p>
       <div class="act">
         <button class="btn" id="round" data-act="round">התחל סבב חדש</button>
         <button class="btn-s danger" id="reset-all" data-act="reset-all">איפוס מלא</button>
@@ -516,6 +532,7 @@ const CHECKS = [
 ];
 
 const I = {
+  flag:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14.5V2M4 2.5h8.5l-2 3.25 2 3.25H4"/></svg>',
   check:'<svg viewBox="0 0 16 16" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"/></svg>',
   dots:'<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="4" cy="10" r="1.7" fill="currentColor"/><circle cx="10" cy="10" r="1.7" fill="currentColor"/><circle cx="16" cy="10" r="1.7" fill="currentColor"/></svg>',
   cart:'<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 3h-2l-1.8 9.2H4.5L2.9 5.5h11.7"/><circle cx="12" cy="16" r="1.2" fill="currentColor"/><circle cx="5.5" cy="16" r="1.2" fill="currentColor"/></svg>',
@@ -527,7 +544,7 @@ const I = {
 
 /* ---------- state ---------- */
 const defaultState = () => ({weeks:3, packed:{}, buy:{}, adj:{}, bag:{}, hidden:{}, custom:[], restock:{}, checks:{}, depart:'', laundry:{D:7,F:2,S:3},
-  ret:{}, retN:{}, autoBuy:{}, sweep:{}, extra:[], extraOk:{}, names:{}, bags:[], bagNames:{}, bagOrder:[], itemOrder:{}, updatedAt:0});
+  ret:{}, retN:{}, autoBuy:{}, sweep:{}, extra:[], extraOk:{}, names:{}, bags:[], bagNames:{}, bagOrder:[], itemOrder:{}, atBase:{}, updatedAt:0});
 const WEEK_LABEL = {1:'שבוע', 2:'שבועיים', 3:'3 שבועות'};
 function ctx(s){
   s = s || state;
@@ -565,6 +582,8 @@ function normalize(s){
   s.custom = s.custom.filter(c => c && c.id && c.name && CATS.some(x => x.id === c.cat))
     .map(c => ({id:String(c.id), cat:c.cat, name:String(c.name).slice(0,80), qty:Number(c.qty)||1, bag:bagIds.has(c.bag)?c.bag:'kit', f:'', custom:true}));
   s.extra = s.extra.filter(x => x && x.id && x.name).map(x => ({id:String(x.id), name:String(x.name).slice(0,80)}));
+  // "left at the base" lives in atBase and survives new rounds; older saves only had the return status
+  for (const k in s.ret) if (s.ret[k] === 'left') s.atBase[k] = true;
   // earlier versions stored absolute quantities; keep them as adjustments on top of the recommendation
   if (s.qty && typeof s.qty === 'object'){
     for (const k in s.qty){
@@ -613,6 +632,9 @@ function applyNames(){
 
 const all = () => ITEMS.concat(state.custom);
 const visible = () => all().filter(i => !state.hidden[i.id] && need(i) > 0);
+// what still has to be packed: everything except what's waiting at the base
+const toPack = () => visible().filter(i => !state.atBase[i.id]);
+const atBaseItems = () => visible().filter(i => state.atBase[i.id]);
 const find = id => all().find(i => i.id === id);
 const qtyFor = (i, s) => Math.max(1, need(i, s) + (Number(s.adj[i.id]) || 0));
 const qtyOf = i => qtyFor(i, state);
@@ -634,10 +656,11 @@ function orderIn(bagId, items){
 const bagName = id => (bagList().find(b => b.id === id) || {}).n || '';
 
 function counts(){
-  const v = visible();
+  const v = visible(), p = toPack();
   return {
-    total: v.length,
-    done: v.filter(i => state.packed[i.id]).length,
+    total: p.length,
+    done: p.filter(i => state.packed[i.id]).length,
+    base: v.length - p.length,
     buy: v.filter(i => state.buy[i.id] === 1).length,
     checks: CHECKS.filter((_, ix) => state.checks[ix]).length
   };
@@ -717,6 +740,7 @@ function renderHeader(c){
   $('#ring').setAttribute('aria-label', 'ארוזים ' + c.done + ' מתוך ' + c.total + ' פריטים');
   $('#st-left').textContent = c.total - c.done;
   $('#st-buy').textContent = c.buy;
+  $('#st-base').textContent = c.base; $('#st-base-w').hidden = !c.base;
   document.querySelectorAll('[data-act="weeks"]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.w) === state.weeks)));
   renderCountdown();
 }
@@ -794,6 +818,7 @@ function editorHTML(it){
       '<button class="btn sm" type="submit">צור והעבר לשם</button><button class="btn-s" type="button" data-act="nb-cancel">ביטול</button></form>' : '') +
     '<div class="ed-a">' +
       '<button class="btn-s' + (buy ? ' on-buy' : '') + '" id="y-' + id + '" data-act="buy" aria-pressed="' + buy + '">' + I.cart + (buy ? 'ברשימת הקניות' : 'להוסיף לקניות') + '</button>' +
+      '<button class="btn-s" id="lb-' + id + '" data-act="base">' + I.flag + 'השארתי בבסיס</button>' +
       (it.custom ? '<button class="btn-s danger" data-act="del">מחק פריט</button>' : '<button class="btn-s" data-act="hide">לא צריך את זה</button>') +
     '</div></div>';
 }
@@ -873,7 +898,7 @@ function renderList(){
   if (drag) return;
   if (ui.reorder){ renderReorder(); return; }
   const q = ui.q.trim();
-  const vis = visible();
+  const vis = toPack();
   const match = i => !q || i.name.includes(q);
   const groups = ui.group === 'bag'
     ? bagList().map(b => ({key:'bag-' + b.id, bag:b, title:b.n, hint:b.h, all:orderIn(b.id, vis.filter(i => bagOf(i) === b.id))}))
@@ -882,6 +907,26 @@ function renderList(){
   let html = '';
   if (c.total && c.done === c.total && !q) html += '<div class="allset">כל הציוד ארוז. <button class="lnk" data-act="tab" data-tab="exit">לבדיקות האחרונות</button></div>';
   let shown = 0;
+  const base = atBaseItems().filter(match);
+  if (base.length){
+    shown++;
+    const collapsed = !q && !!ui.collapsed.base;
+    html += '<section class="sec sec-base"><button class="sec-h" id="h-base" data-act="sec" data-key="base" aria-expanded="' + !collapsed + '">' +
+      '<span class="sec-t">' + I.flag + 'השארת בבסיס</span><span class="sec-c" dir="ltr">' + base.length + '</span><span class="chev">' + I.chev + '</span>' +
+      '<span class="sec-hint">לא צריך לארוז אותם. הם מחכים לך בבסיס ומסומנים ברשימת החזרה.</span></button>';
+    if (!collapsed){
+      html += '<div class="rows">' + base.map(it => {
+        const n = qtyOf(it);
+        return '<div class="row is-base" data-id="' + it.id + '"><div class="row-l">' +
+          '<div class="row-main"><span class="box base-box" aria-hidden="true">' + I.flag + '</span>' +
+            '<span class="row-t"><span class="nm">' + esc(it.name) + '</span><span class="sub">' + esc(ui.group === 'bag' ? catName(it.cat) : bagName(bagOf(it))) + '</span></span>' +
+            (n > 1 ? '<span class="qty" dir="ltr">×' + n + '</span>' : '<span></span>') + '</div>' +
+          '<button class="btn-s" id="ub-' + it.id + '" data-act="unbase">החזר לאריזה</button>' +
+        '</div></div>';
+      }).join('') + '</div>';
+    }
+    html += '</section>';
+  }
   for (const g of groups){
     let rows = g.all.filter(match);
     if (q && !rows.length) continue;
@@ -991,6 +1036,7 @@ function renderExit(c){
     '<div class="panel"><h2>מוכנות ליציאה</h2><div class="meters">' +
       meter('ציוד ארוז', c.done, c.total) +
       meter('בדיקות אחרונות', c.checks, CHECKS.length) +
+      (c.base ? '<div class="meter ok"><div class="meter-t"><span>מחכים לך בבסיס, לא צריך לארוז</span><b dir="ltr">' + c.base + '</b></div></div>' : '') +
       '<div class="meter ' + (c.buy ? 'warn' : 'ok') + '"><div class="meter-t"><span>פריטים שעוד צריך לקנות</span><b dir="ltr">' + c.buy + '</b></div></div>' +
     '</div></div>' +
     '<div class="panel list"><div class="panel-h"><h2>בדיקות אחרונות</h2></div><div class="rows">' +
@@ -1021,14 +1067,14 @@ const SPOTS = [
   {t:'מקרר ומועדון', h:'קופסאות ואוכל ששמת בצד', ids:['food-3','food-4','food-5','food-6']}
 ];
 const CRIT = {'docs-1':'תעודת זהות','docs-2':'חוגר','docs-3':'ארנק','docs-7':'מפתחות','elec-1':'טלפון','docs-5':'תרופות'};
-const RST = [['ok','חזר'],['left','נשאר בבסיס'],['used','נגמר'],['lost','אבד']];
-const RST_LABEL = {ok:'חזר', left:'נשאר בבסיס', used:'נגמר', lost:'אבד'};
+const RST = [['ok','חזר'],['left','השארתי בבסיס'],['used','נגמר'],['lost','אבד']];
+const RST_LABEL = {ok:'חזר', left:'השארתי בבסיס', used:'נגמר', lost:'אבד'};
 let wasBack = null;
 
 function retItems(){
   const v = visible();
   const fromPacked = v.some(i => state.packed[i.id]);
-  return {items: fromPacked ? v.filter(i => state.packed[i.id] || state.ret[i.id]) : v, fromPacked};
+  return {items: fromPacked ? v.filter(i => state.packed[i.id] || state.ret[i.id] || state.atBase[i.id]) : v, fromPacked};
 }
 function retN(it){ const q = qtyOf(it); return state.ret[it.id] === 'ok' ? Math.min(state.retN[it.id] != null ? state.retN[it.id] : q, q) : 0; }
 function isPartial(it){ return state.ret[it.id] === 'ok' && retN(it) < qtyOf(it); }
@@ -1037,6 +1083,7 @@ function retCounts(){
   const c = {items, fromPacked:r.fromPacked, total:items.length,
     done: items.filter(i => state.ret[i.id]).length,
     lost: items.filter(i => state.ret[i.id] === 'lost').length,
+    left: items.filter(i => state.ret[i.id] === 'left').length,
     part: items.filter(isPartial).length,
     sweep: SPOTS.filter((_, ix) => state.sweep[ix]).length,
     xs: state.extra.length, xok: state.extra.filter(x => state.extraOk[x.id]).length};
@@ -1044,11 +1091,13 @@ function retCounts(){
   c.missing = (c.total - c.done) + c.lost + c.part + (c.xs - c.xok) + (SPOTS.length - c.sweep);
   return c;
 }
-// set the return status; "used up" and "lost" go to the shopping list, and come off it again if the status is undone
+// set the return status; "used up" and "lost" go to the shopping list, and come off it again if the status is undone.
+// "left at the base" also marks the item as waiting at the base, which keeps it off the next packing list.
 function setRet(s, id, st){
   const prev = s.ret[id] || '';
   if (st) s.ret[id] = st; else delete s.ret[id];
   if (st !== 'ok') delete s.retN[id];
+  if (st === 'left') s.atBase[id] = true; else delete s.atBase[id];
   const wants = st === 'used' || st === 'lost';
   if (wants && !s.buy[id]){ s.buy[id] = 1; s.autoBuy[id] = true; }
   if (!wants && s.autoBuy[id]){ if (s.buy[id] === 1) delete s.buy[id]; delete s.autoBuy[id]; }
@@ -1060,17 +1109,22 @@ function retRowHTML(it, mode){
   const id = it.id, st = state.ret[id] || '', q = qtyOf(it), open = ui.ropen === id;
   const part = isPartial(it), n = retN(it);
   const sub = mode === 'bag' ? catName(it.cat) : bagName(bagOf(it));
-  const cls = 'row' + (st && st !== 'lost' && !part ? ' is-packed' : '') + (part ? ' is-part' : '') + (st === 'lost' ? ' is-lost' : '') +
+  const cls = 'row' + (st && st !== 'lost' && st !== 'left' && !part ? ' is-packed' : '') + (part ? ' is-part' : '') + (st === 'lost' ? ' is-lost' : '') +
     (st === 'used' || st === 'left' ? ' st-' + st : '') + (open ? ' is-open' : '');
   let tag = '';
   if (part) tag = '<span class="tag-buy">חסרים ' + (q - n) + '</span>';
-  else if (st && st !== 'ok') tag = '<span class="tag-st' + (st === 'lost' ? ' tag-lost' : '') + '">' + RST_LABEL[st] + (st !== 'left' && state.buy[id] ? ' · לקניות' : '') + '</span>';
+  else if (st === 'left') tag = '<span class="tag-base">' + RST_LABEL.left + '</span>';
+  else if (st && st !== 'ok') tag = '<span class="tag-st' + (st === 'lost' ? ' tag-lost' : '') + '">' + RST_LABEL[st] + (state.buy[id] ? ' · לקניות' : '') + '</span>';
   const qty = part ? '<span class="qty part" dir="ltr">' + n + '/' + q + '</span>' : (q > 1 ? '<span class="qty" dir="ltr">×' + q + '</span>' : '<span></span>');
+  // one-tap "left it at the base" while the item is still open or already left
+  const pill = (!st || st === 'left')
+    ? '<button class="base-pill' + (st === 'left' ? ' on' : '') + '" id="rb-' + id + '" data-act="rbase" aria-pressed="' + (st === 'left') + '" aria-label="השארתי בבסיס: ' + esc(it.name) + '">' + I.flag + '<span class="bp-t">בבסיס</span></button>'
+    : '<span></span>';
   return '<div class="' + cls + '" data-id="' + id + '"><div class="row-l">' +
     '<button class="row-main" id="rr-' + id + '" data-act="ret" aria-pressed="' + !!st + '">' +
-      '<span class="box" aria-hidden="true">' + (st === 'lost' ? I.xs : I.check) + '</span>' +
+      '<span class="box" aria-hidden="true">' + (st === 'lost' ? I.xs : st === 'left' ? I.flag : I.check) + '</span>' +
       '<span class="row-t"><span class="nm">' + esc(it.name) + '</span><span class="sub">' + esc(sub) + tag + '</span></span>' + qty +
-    '</button>' +
+    '</button>' + pill +
     '<button class="more" id="re-' + id + '" data-act="redit" aria-expanded="' + open + '" aria-label="מצב החזרה של ' + esc(it.name) + '">' + I.dots + '</button>' +
   '</div>' + (open ? retEditorHTML(it) : '') + '</div>';
 }
@@ -1088,7 +1142,7 @@ function retEditorHTML(it){
   h += '<div class="ed-r"><span class="ed-l">מצב</span><div class="chips">' +
     RST.map(([k, l]) => '<button class="chip' + (st === k ? ' on' : '') + '" id="rx-' + id + '-' + k + '" data-act="rst" data-st="' + k + '" aria-pressed="' + (st === k) + '">' + l + '</button>').join('') +
   '</div></div>' +
-  '<p class="ed-hint">„נגמר" ו„אבד" מוסיפים את הפריט לרשימת הקניות. „נשאר בבסיס" יסומן מראש כארוז בסבב הבא.</p></div>';
+  '<p class="ed-hint">„נגמר" ו„אבד" מוסיפים את הפריט לרשימת הקניות. „השארתי בבסיס" מוריד אותו מרשימת האריזה עד שתחזיר אותו הביתה.</p></div>';
   return h;
 }
 function renderBack(){
@@ -1098,9 +1152,10 @@ function renderBack(){
   wasBack = rc.all;
   let h = '<div class="panel"><h2>חזרה הביתה</h2><p class="lede">' +
     (rc.fromPacked ? 'הרשימה בנויה ממה שסימנת כארוז ביציאה.' : 'לא סימנת אריזה ביציאה, אז הרשימה כוללת את כל הציוד.') +
-    ' סמן כל פריט כשהוא חוזר לתיק. משהו נגמר או אבד? פתח את הפריט וסמן, והוא יעבור לרשימת הקניות.</p>' +
-    '<div class="meters">' + meter('חזרו לתיק', rc.done, rc.total) + meter('סריקה אחרונה', rc.sweep, SPOTS.length) +
+    ' סמן כל פריט כשהוא חוזר לתיק. משאיר משהו בבסיס? לחץ „בבסיס" והוא לא יופיע באריזה הבאה. משהו נגמר או אבד? פתח את הפריט וסמן, והוא יעבור לרשימת הקניות.</p>' +
+    '<div class="meters">' + meter('סומנו', rc.done, rc.total) + meter('סריקה אחרונה', rc.sweep, SPOTS.length) +
       (rc.xs ? meter('קיבלת בבסיס', rc.xok, rc.xs) : '') +
+      (rc.left ? '<div class="meter ok"><div class="meter-t"><span>השארת בבסיס</span><b dir="ltr">' + rc.left + '</b></div></div>' : '') +
       '<div class="meter ' + (rc.lost + rc.part ? 'warn' : 'ok') + '"><div class="meter-t"><span>חסרים או אבדו</span><b dir="ltr">' + (rc.lost + rc.part) + '</b></div></div>' +
     '</div>' +
     '<div class="act"><button class="btn-s" id="ret-copy" data-act="ret-copy"' + (rc.missing ? '' : ' disabled') + '>' + I.copy + 'העתק מה שעוד חסר</button>' +
@@ -1208,7 +1263,7 @@ function copy(text, msg){
 const line = i => { const n = qtyOf(i); return '• ' + i.name + (n > 1 ? ' ×' + n : ''); };
 function shopText(){ return ['רשימת קניות · קיטבג נחשון'].concat(visible().filter(i => state.buy[i.id] === 1).map(line)).join('\n'); }
 function leftText(){
-  const v = visible().filter(i => !state.packed[i.id]);
+  const v = toPack().filter(i => !state.packed[i.id]);
   const out = ['עוד לא ארוז · קיטבג נחשון'];
   CATS.forEach(c => { const r = v.filter(i => i.cat === c.id); if (r.length) out.push('', c.n, ...r.map(line)); });
   return out.join('\n');
@@ -1504,7 +1559,7 @@ document.addEventListener('click', e => {
       break;
     }
     case 'del': ui.open = null;
-      commit(s => { s.custom = s.custom.filter(c => c.id !== id); ['packed','buy','adj','bag','hidden','restock','ret','retN','autoBuy'].forEach(k => delete s[k][id]); });
+      commit(s => { s.custom = s.custom.filter(c => c.id !== id); ['packed','buy','adj','bag','hidden','restock','ret','retN','autoBuy','atBase'].forEach(k => delete s[k][id]); });
       toast('הפריט נמחק'); break;
     case 'sec': toggleKey(ui.collapsed, t.dataset.key); saveUI(); renderAll(); break;
     case 'add-open': ui.adding = t.dataset.cat; ui.addDraft = ''; renderList(); { const n = document.getElementById('add-' + ui.adding); if (n) n.focus(); } break;
@@ -1512,7 +1567,8 @@ document.addEventListener('click', e => {
     case 'tab': setTab(t.dataset.tab); break;
     case 'group': ui.group = t.dataset.g; ui.open = null; ui.ropen = null; closeForms(); saveUI(); renderAll(); break;
     case 'hideret': ui.hideRet = !ui.hideRet; saveUI(); renderBack(); break;
-    case 'ret': { const was = state.ret[id]; commit(s => { setRet(s, id, was ? '' : 'ok'); }); break; }
+    // tapping a row marks it back in the bag; an item that was at the base comes home the same way
+    case 'ret': { const was = state.ret[id]; commit(s => { setRet(s, id, was && was !== 'left' ? '' : 'ok'); }); break; }
     case 'redit': ui.ropen = ui.ropen === id ? null : id; renderBack(); break;
     case 'rst': {
       const st = t.dataset.st, next = state.ret[id] === st ? '' : st;
@@ -1532,7 +1588,11 @@ document.addEventListener('click', e => {
     case 'xok': { const xid = t.closest('[data-xid]').dataset.xid; commit(s => toggleKey(s.extraOk, xid)); break; }
     case 'xdel': { const xid = t.closest('[data-xid]').dataset.xid; commit(s => { s.extra = s.extra.filter(x => x.id !== xid); delete s.extraOk[xid]; }); break; }
     case 'ret-copy': copy(missingText(), 'הרשימה הועתקה'); break;
-    case 'ret-clear': armed(t, () => { ui.ropen = null; commit(s => { s.ret = {}; s.retN = {}; s.autoBuy = {}; s.sweep = {}; s.extraOk = {}; }); toast('רשימת החזרה נוקתה'); }); break;
+    case 'ret-clear': armed(t, () => {
+      ui.ropen = null;
+      commit(s => { s.ret = {}; s.retN = {}; s.autoBuy = {}; s.sweep = {}; s.extraOk = {}; for (const k in s.atBase) s.ret[k] = 'left'; });
+      toast('רשימת החזרה נוקתה. מה שבבסיס נשאר מסומן');
+    }); break;
     case 'hidepacked': ui.hidePacked = !ui.hidePacked; saveUI(); renderTools(); renderList(); break;
     case 'bought': commit(s => { s.buy[id] = s.buy[id] === 2 ? 1 : 2; }); break;
     case 'unbuy': commit(s => { delete s.buy[id]; }); break;
@@ -1542,15 +1602,35 @@ document.addEventListener('click', e => {
     case 'restock': commit(s => toggleKey(s.restock, id)); break;
     case 'check': { const ix = t.closest('[data-ix]').dataset.ix; commit(s => toggleKey(s.checks, ix)); break; }
     case 'round': armed(t, () => {
-      let left = 0;
       commit(s => {
-        const p = {};
-        for (const k in s.ret) if (s.ret[k] === 'left'){ p[k] = true; left++; }
-        s.packed = p; s.restock = {}; s.checks = {};
+        s.packed = {}; s.restock = {}; s.checks = {};
         s.ret = {}; s.retN = {}; s.autoBuy = {}; s.sweep = {}; s.extraOk = {};
+        // what's waiting at the base stays off the packing list and comes back pre-marked in the return list
+        for (const k in s.atBase) s.ret[k] = 'left';
       });
-      toast(left ? 'סבב חדש. ' + (left === 1 ? 'פריט אחד שנשאר בבסיס מסומן' : left + ' פריטים שנשארו בבסיס מסומנים') + ' כארוז' : 'סבב חדש. הכמויות והפריטים שלך נשמרו');
+      const base = atBaseItems().length;
+      toast(base ? 'סבב חדש. ' + (base === 1 ? 'פריט אחד מחכה' : base + ' פריטים מחכים') + ' לך בבסיס, לא צריך לארוז אותם' : 'סבב חדש. הכמויות והפריטים שלך נשמרו');
     }); break;
+    case 'rbase': {
+      const it = find(id); if (!it) break;
+      const on = state.ret[id] === 'left';
+      commit(s => { setRet(s, id, on ? '' : 'left'); });
+      toast(on ? '„' + it.name + '" כבר לא מסומן בבסיס' : '„' + it.name + '" נשאר בבסיס. הוא לא יופיע באריזה הבאה');
+      break;
+    }
+    case 'base': {
+      const it = find(id); if (!it) break;
+      ui.open = null;
+      commit(s => { setRet(s, id, 'left'); delete s.packed[id]; });
+      toast('„' + it.name + '" סומן בבסיס. הוא לא יופיע באריזה עד שתחזיר אותו');
+      break;
+    }
+    case 'unbase': {
+      const it = find(id); if (!it) break;
+      commit(s => { if (s.ret[id] === 'left') delete s.ret[id]; delete s.atBase[id]; });
+      toast('„' + it.name + '" חזר לרשימת האריזה');
+      break;
+    }
     case 'reset-all': armed(t, () => { ui.open = null; commit(s => { const d = defaultState(); Object.keys(s).forEach(k => delete s[k]); Object.assign(s, d); }); toast('הרשימה חזרה למצב ההתחלתי'); }); break;
     case 'sheet-close': $('#sheet').hidden = true; break;
     case 'bk-save': saveBackup(); break;
